@@ -1,0 +1,52 @@
+;; This config should be generated using ensime-config-gen. Feel free to customize its contents manually. 
+
+(
+
+  :root-dir string
+
+  :name string
+
+  :package string
+
+  :version string
+
+  :use-maven t|nil
+
+  :use-ivy t|nil
+  :ivy-file string
+  :ivy-runtime-conf string
+  :ivy-compile-conf string
+  :ivy-test-conf string
+
+  :compile-deps (strings)
+
+  :compile-jars (strings)
+
+  :runtime-deps (strings)
+
+  :runtime-jars (strings)
+
+  :test-deps (strings)
+
+  :source-roots (strings)
+
+  :target string
+
+  :disable-index-on-startup t|nil
+
+  :only-include-in-index regex
+
+  :exclude-from-index regex
+
+  :compiler-args (strings)
+
+  :builder-args (strings)
+
+  :formatting-prefs (symbol_map)
+
+  
+  ;; ??? 
+  ;; ? :subprojects ()
+  ;; ? :project-name "AmazingProject"
+  ;; ? :project-package "synonyms"
+)

@@ -1,0 +1,15 @@
+{
+  "name" : "envim",
+  "version" : "0.1",
+  "author" : "Jeanluc Chasseriau <jeanluc@lo.cx>",
+  "maintainer" : "Jeanluc Chasseriau <jeanluc@lo.cx>",
+  "repository" : {"type": "git", "url": "git://github.com/jlc/envim.git", "branch" : "master"},
+  "dependencies" : {
+    "vim-addon-async": {},
+    "vim-addon-completion": {},
+    "vim-addon-signs": {},
+    "vim-addon-mw-utils": {},
+    "ensime-common": {}
+  },
+  "description" : "ENsime VIm: Vim integration of The famous Ensime"
+}
