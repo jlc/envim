@@ -30,9 +30,11 @@ import sys
 import mmap
 import types
 import vim
-from Helper import Logger
+import logging
 from SExpression import *
 from SwankProtocol import *
+
+log = logging.getLogger('envim')
 
 @SimpleSingleton
 class State(object):
@@ -64,17 +66,17 @@ def checkCompilerReady():
 
 # normal echo (in vim command line)
 def echo(s):
-  Logger().info(s)
+  log.info(s)
   vim.command("echo('"+s+"')")
 
 # error echo (highlighted in vim command line)
 def echoe(s):
-  Logger().error(s)
+  log.error(s)
   vim.command("echoe('"+s+"')")
 
 # debug echo (as provided by Decho addon: open a new window)
 def decho(s):
-  Logger().debug(s)
+  log.debug(s)
   vim.command("Decho('"+s+"')")
 
 def writeToEnsimeClient(data):
@@ -118,8 +120,8 @@ def setQuickFixList(qflist):
     return o
 
   o = listOfDictToString(qflist)
-  Logger().debug("Quick fix list: ")
-  Logger().debug(o)
+  log.debug("Quick fix list: ")
+  log.debug(o)
 
   vim.command("call setqflist("+o+")")
 
@@ -148,7 +150,7 @@ def codeDetailsString(code, detail):
 def ensimeConfigToPython(filename):
   try: f = file(filename)
   except:
-    Logger().error("ensimeConfigToPython: unable to open ensime config file ("+filename+")")
+    log.error("ensimeConfigToPython: unable to open ensime config file ("+filename+")")
     return None
  
   outlist = []
@@ -170,8 +172,8 @@ def ensimeConfigToPython(filename):
 
   out = ' '.join(outlist)
 
-  Logger().debug("ensimeConfigToPython: reading conf:")
-  Logger().debug(out)
+  log.debug("ensimeConfigToPython: reading conf:")
+  log.debug(out)
 
   sexp = SExpParser().parse(out)
   py = sexp.toPy()
@@ -179,8 +181,8 @@ def ensimeConfigToPython(filename):
   if not py.has('root_dir'):
     setattr(py, 'root_dir', os.getcwd())
 
-  Logger().debug("ensimeConfigToPython: python object:")
-  Logger().debug(py.debugString())
+  log.debug("ensimeConfigToPython: python object:")
+  log.debug(py.debugString())
 
   return py
 
@@ -210,7 +212,7 @@ def notesToQuickFixList(notes):
     debugs = '['+note.severity+'] '+os.path.basename(note.file)+' l.'+str(note.line)+' c.'+str(note.col)
     debugs += ' : '+note.msg
 
-    Logger().debug(debugs)
+    log.debug(debugs)
 
   return qflist
 
@@ -221,7 +223,7 @@ def offsetToLineCol(filename, offset):
     buf = mmap.mmap(f.fileno(), 0)
     f.close()
   except Exception as detail:
-    Logger().error("offsetToLineCol: unable to open file ("+filename+") : "+str(detail))
+    log.error("offsetToLineCol: unable to open file ("+filename+") : "+str(detail))
     return None
 
   found = False
@@ -246,7 +248,7 @@ def offsetToLineCol(filename, offset):
   if found:
     return (line, lineno, col)
 
-  Logger().debug("offsetToLineCol: line and column not found for "+filename+":"+str(offset))
+  log.debug("offsetToLineCol: line and column not found for "+filename+":"+str(offset))
   return None
 
 def rangePosToQuickFixList(rangePosList):

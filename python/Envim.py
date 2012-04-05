@@ -29,20 +29,16 @@
 # - update QuickFixList only when received FullTypecheck done
 # - test if Analyzer is ready before use TypecheckFile / TypecheckAll
 
+import logging
 from VimHelpers import *
+from Helper import *
 
-from Helper import Logger
 from SwankProtocol import *
 
 from Responses import *
 from Events import *
 
-def setupEnsime():
-  Logger().setOutput("./vim_envim.log")
-  Logger().useStdOut(False)
-  Logger().info('-'*30)
-
-  SwankProcessor().setSendFunction(None)
+log = logging.getLogger('envim')
 
 @CatchAndLogException
 def envimConnectionAndProjectInit():

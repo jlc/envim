@@ -25,8 +25,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 from VimHelpers import *
-from Helper import SimpleSingleton, Logger
+from Helper import SimpleSingleton
+
+log = logging.getLogger('envim')
 
 @SimpleSingleton
 class ConnectionInfoHandler(SwankCallHandler):
@@ -60,7 +63,7 @@ class InitProjectHandler(SwankCallHandler):
     echo("Initializing project: "+str(r.project_name))
 
     for src in r.source_roots:
-      Logger().debug("project source roots: "+src)
+      log.debug("project source roots: "+src)
 
     State().initialized = True
 

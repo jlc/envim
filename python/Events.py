@@ -25,12 +25,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 from VimHelpers import *
-from Helper import SimpleSingleton, Logger
+
+log = logging.getLogger('envim')
 
 @SwankEventBackgroundMessage
 def backgroundMessage(code, details):
-  Logger().debug('Background message: '+codeDetailsString(code, details))
+  log.debug('Background message: '+codeDetailsString(code, details))
   echo(details)
 
 @SwankEventReaderError
@@ -57,11 +59,11 @@ def scalaNotes(notes):
   # notes.notes = []
 
   if (notes.is_full):
-    Logger().debug("Full scala notes list, clear previous list")
+    log.debug("Full scala notes list, clear previous list")
 
     qflist = notesToQuickFixList(notes.notes)
   else:
-    Logger().debug("Partial scala notes list")
+    log.debug("Partial scala notes list")
 
     # here we prepend existing notes
     notes.notes.reverse()
@@ -78,7 +80,7 @@ def scalaNotes(notes):
 
 @SwankEventClearAllScalaNotes
 def clearAllScalaNotes():
-  Logger().debug("Clear all Scala notes")
+  log.debug("Clear all Scala notes")
 
   setQuickFixList([])
 

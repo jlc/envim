@@ -50,6 +50,7 @@ python << endpython
 import os
 import vim
 import sys
+import logging
 
 # retrieve paths on the python side of the force
 ensimePath = vim.eval("g:envim['path-ensime']")
@@ -77,9 +78,8 @@ ensimeDistPath = ensimePath + os.path.sep + lastDist
 vim.command("let g:envim['path-ensime-dist'] = get(g:envim, 'path-ensime-dist', '"+ensimeDistPath+"')")
 
 # setup logger
-Logger().setOutput("./envim.log")
-Logger().useStdOut(False)
-Logger().info('-'*50)
+initLog('ensime-common', 'envim.log')
+initLog('envim', 'envim.log')
 
 # not ready to send anything to ensime yet
 SwankProcessor().setSendFunction(None)
