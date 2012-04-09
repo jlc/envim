@@ -31,8 +31,13 @@ noremap <leader>eo :EnvimUsesOfSymbolAtPoint<cr>
 
 augroup ENVIM
   au!
-  autocmd VimLeave call envim#ShutdownServer()
   " autocmd BufWritePost *.scala if !g:envim.prevent_typecheck | call envim#TypecheckFile() | endif
+  autocmd VimLeave * call envim#ShutdownServer()
+  autocmd CursorMoved,CursorMovedI * call envim#OnCursorMoved()
   autocmd BufRead,BufNewFile .ensime  setlocal ft=default.ensime
-augroup end
 
+  autocmd BufReadPost quickfix setlocal nonu nocursorline
+  autocmd BufReadPost preview setlocal nonu nocursorline
+
+  autocmd CursorMovedI,InsertLeave *.scala :call envim#detectEndCompletions()
+augroup end

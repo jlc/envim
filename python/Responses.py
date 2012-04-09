@@ -15,6 +15,8 @@
 # limitations under the License.
 
 import logging
+from EnvimOutputs import *
+from EnvimTools import *
 from VimHelpers import *
 from Helper import SimpleSingleton
 
@@ -93,7 +95,8 @@ class SymbolAtPointHandler(SwankCallHandler):
 
   def response(self, symbolInfo):
     if not symbolInfo:
-      echo("No symbol here")
+      #echo("No symbol here")
+      PreviewOutput().set(["No symbol here"])
       return
 
     # Example:
@@ -118,7 +121,10 @@ class SymbolAtPointHandler(SwankCallHandler):
     if decl_as != '' or full_name != '':
       out += ' (' + decl_as + ' ' + full_name + ')'
 
-    echo(out)
+    log.debug("SymbolAtPointHandler.response: %s", out)
+
+    #echo(out)
+    PreviewOutput().set([out])
 
 @SimpleSingleton
 class UsesOfSymbolAtPointHandler(SwankCallHandler):
@@ -129,10 +135,39 @@ class UsesOfSymbolAtPointHandler(SwankCallHandler):
   def response(self, rangePosList):
     if not rangePosList:
       echo("Symbol not used")
+      setQuickFixList([])
       return
 
     qflist = rangePosToQuickFixList(rangePosList)
 
     setQuickFixList(qflist)
 
+@SimpleSingleton
+class CompletionsHandler(SwankCallHandler):
+
+  def abort(self, code, details):
+    echoe("Completions abort: "+codeDetailsString(code, details))
+
+  def response(self, completions):
+    if not completions or not completions.has('completions'):
+      echo("Empty completions")
+      return
+
+    isCallableToVim = {True: 'f', False: 'v'}
+
+    log.debug("CompletionsHandler.response: ")
+
+    out = [{'word':completions.prefix}]
+    for comp in completions.completions:
+      d = {}
+      d['word'] = comp.name
+      d['info'] = comp.type_sig
+      if comp.has('is_callable'):
+        d['kind'] = isCallableToVim[comp.is_callable]
+
+      out.append(d)
+
+    OmniOutput().setResults(out)
+
+    OmniOutput().showCompletions()
 

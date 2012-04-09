@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import logging
+from EnvimTools import *
 from VimHelpers import *
 
 log = logging.getLogger('envim')

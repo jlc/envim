@@ -19,6 +19,8 @@
 # - test if Analyzer is ready before use TypecheckFile / TypecheckAll
 
 import logging
+from EnvimTools import *
+from EnvimOutputs import *
 from VimHelpers import *
 from Helper import *
 
@@ -29,53 +31,148 @@ from Events import *
 
 log = logging.getLogger('envim')
 
-@CatchAndLogException
-def envimConnectionAndProjectInit():
-  SwankRpc().connectionInfo()(ConnectionInfoHandler())
+@SimpleSingleton
+class Envim:
 
-@CatchAndLogException
-def envimShutdownServer():
-  echo("Shuting down Ensime server")
-  SwankRpc().shutdownServer()(ShutdownServerHandler())
-  State().initialized = False
+  @CatchAndLogException
+  def __init__(self):
+    self.pauseAfter = 0
+    self.currentCompletions = self.beginCompletions
 
-@CatchAndLogException
-def envimTypecheckFile():
-  if not checkCompilerReady(): return
+  def setPauseAfter(self, pauseAfter):
+    self.pauseAfter = pauseAfter
 
-  # @todo: ensure that file is in source-roots
-  filename = getCurrentFilename()
-  if filename == None:
-    echoe("Unknown current filename")
-  else:
-    SwankRpc().typecheckFile(filename)(TypecheckFileHandler())
+  @CatchAndLogException
+  def sendToEnsimeClient(self, data):
+    if self.pauseAfter <= 0:
+      vim.eval("g:envim.ensimeClientCtx.write('"+data+"')")
+    else:
+      vim.eval("g:envim.ensimeClientCtx.writeAndPause('"+data+"', %d)" % (self.pauseAfter))
+      self.pauseAfter = 0
 
-@CatchAndLogException
-def envimTypecheckAll():
-  if not checkCompilerReady(): return
+  @CatchAndLogException
+  def connectionAndProjectInit(self):
+    SwankRpc().connectionInfo()(ConnectionInfoHandler())
 
-  SwankRpc().typecheckAll()(TypecheckAllHandler())
+  @CatchAndLogException
+  def shutdownServer(self):
+    echo("Shuting down Ensime server")
+    SwankRpc().shutdownServer()(ShutdownServerHandler())
+    State().initialized = False
 
-@CatchAndLogException
-def envimSymbolAtPoint():
-  if not checkCompilerReady(): return
+  @CatchAndLogException
+  def typecheckFile(self):
+    if not checkCompilerReady(): return
 
-  filename = getCurrentFilename()
-  if filename == None:
-    echoe("Unknown current filename")
-  else:
-    #saveFile()
-    offset = getCurrentOffset()
-    SwankRpc().symbolAtPoint(filename, offset)(SymbolAtPointHandler())
+    # @todo: ensure that file is in source-roots
+    filename = getCurrentFilename()
+    if filename == None:
+      echoe("Unknown current filename")
+    else:
+      SwankRpc().typecheckFile(filename)(TypecheckFileHandler())
 
-@CatchAndLogException
-def envimUsesOfSymbolAtPoint():
-  if not checkCompilerReady(): return
+  @CatchAndLogException
+  def typecheckAll(self):
+    if not checkCompilerReady(): return
 
-  filename = getCurrentFilename()
-  if filename == None:
-    echoe("Unknown current filename")
-  else:
-    offset = getCurrentOffset()
-    SwankRpc().usesOfSymbolAtPoint(filename, offset)(UsesOfSymbolAtPointHandler())
+    SwankRpc().typecheckAll()(TypecheckAllHandler())
+
+  @CatchAndLogException
+  def symbolAtPoint(self):
+    if not checkCompilerReady(): return
+
+    filename = getCurrentFilename()
+    if filename == None:
+      echoe("Unknown current filename")
+    else:
+      #saveFile()
+      offset = getCurrentOffset()
+      SwankRpc().symbolAtPoint(filename, offset)(SymbolAtPointHandler())
+
+  @CatchAndLogException
+  def usesOfSymbolAtPoint(self):
+    if not checkCompilerReady(): return
+
+    filename = getCurrentFilename()
+    if filename == None:
+      echoe("Unknown current filename")
+    else:
+      offset = getCurrentOffset()
+      SwankRpc().usesOfSymbolAtPoint(filename, offset)(UsesOfSymbolAtPointHandler())
+
+  @CatchAndLogException
+  def onCursorMoved(self):
+    PreviewOutput().close()
+    pass
+
+  @CatchAndLogException
+  def simpleCompletion(self):
+    log.debug("Envim.simpleCompletion")
+    vim.command("silent update")
+
+    filename = getCurrentFilename()
+    if filename == None:
+      echoe("Unknown current filename")
+    else:
+      offset = getCurrentOffset()
+      log.debug("Envim.simpleCompletion: SwankRpc()")
+      SwankRpc().completions(filename, offset, 30, False)(CompletionsHandler())
+
+
+  @CatchAndLogException
+  def completions(self, findstart, base):
+    log.debug("Envim.completions: findstart: %d %s base: %s", findstart, str(findstart.__class__), base)
+
+    self.currentCompletions(findstart, base)
+
+  @CatchAndLogException
+  def beginCompletions(self, findstart, base):
+    log.debug("Envim.beginCompletions:")
+
+    if findstart == 1:
+
+      cmds = [
+        "let pos = col('.') -1",
+        "let line = getline('.')",
+        "let bc = strpart(line,0,pos)",
+        "let match_text = matchstr(bc, '\zs[^ \t#().[\]{}\''\";: ]*$')",
+        "let completion_result = len(bc)-len(match_text)"
+      ]
+
+      vim.command("\n".join(cmds))
+
+      OmniOutput().setStart(int(vim.eval("completion_result")))
+
+    else:
+      vim.command("update")
+
+      filename = getCurrentFilename()
+      if filename == None:
+        echoe("Unknown current filename")
+      else:
+        offset = getCurrentOffset()
+
+        self.setPauseAfter(1)
+        SwankRpc().completions(filename, offset, 10, False)(CompletionsHandler())
+
+      vim.command("let completion_result = []")
+
+      self.currentCompletions = self.showCompletions
+
+    log.debug("Envim.beginCompletions: completion_result: %s", vim.eval("completion_result"))
+
+  @CatchAndLogException
+  def showCompletions(self, findstart, base):
+    log.debug("Envim.showCompletions:")
+
+    if findstart == 1:
+      vim.command("let completion_result = %d" % (OmniOutput().getStart()))
+
+    else:
+      results = OmniOutput().getFormatedResults()
+      vim.command("let completion_result = %s" % (results))
+
+      self.currentCompletions = self.beginCompletions
+
+    log.debug("Envim.showCompletions: completion_result: %s", vim.eval("completion_result"))
 

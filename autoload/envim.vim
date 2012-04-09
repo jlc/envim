@@ -53,6 +53,7 @@ sys.path.append(vimPythonPath)
 from Helper import *
 from VimHelpers import *
 from Envim import *
+from EnvimOutputs import *
 
 # search for the last ensime distribution
 filesList = os.listdir(ensimePath)
@@ -70,6 +71,8 @@ vim.command("let g:envim['path-ensime-dist'] = get(g:envim, 'path-ensime-dist', 
 initLog('ensime-common', 'envim.log')
 initLog('envim', 'envim.log')
 
+def elog(): return logging.getLogger('envim')
+
 # not ready to send anything to ensime yet
 SwankProcessor().setSendFunction(None)
 endpython
@@ -77,9 +80,22 @@ endpython
 " start ensime server thanks to async exec - log to porcelaine
 fun! envim#StartServer()
 
+  "redir >> ./envim_command_output.log
+
   if has_key(g:envim, 'serverCtx')
     echoe("Ensime server already started")
     return
+  endif
+
+  if !exists('*async_exec') || has('gui_running')
+    if !vam#IsPluginInstalled('vim-async-beans')
+      echoe("Error: vim-async-beans is not installed.")
+      finish
+    endif
+    if !g:abeans['connected']
+      call abeans#start()
+      sleep 1
+    endif
   endif
 
   if !has_key(g:envim, 'portfile')
@@ -87,31 +103,30 @@ fun! envim#StartServer()
   endif
 
   let cmd = 'cd '.g:envim['path-ensime-dist'].' && ./bin/server '.shellescape(g:envim.portfile)
-  let ctx = {'cmd': cmd, 'move_last':1, 'line_prefix': 'server  : '}
+  let ctx = {'cmd': cmd}
 
-  call async_porcelaine#LogToBuffer(ctx)
+  py PreviewOutput().setupBuffer()
 
-  fun! ctx.gotPort(data)
-    call envim#StartSwankClient()
-  endf
+  py ServerOutput().setupBuffer()
 
-  let regex_port = 'Server listening on \(\d\+\)\.\.'
-  call ctx.dataTillRegexMatchesLine(regex_port, ctx.gotPort)
+  py ServerOutput().addFilter('^Server listening on.*$', lambda(l): vim.command('call envim#StartSwankClient()'), True)
+  py ServerOutput().addFilter('^Got connection, creating handler.*$', lambda(l): Envim().connectionAndProjectInit(), True)
 
-  fun! ctx.gotConnection(data)
-    call envim#connectionAndProjectInit()
-  endf
+  fun! ctx.receive(data)
+    python ServerOutput().onServerOutput(vim.eval('a:data'))
+  endfun
 
-  let regex_conn = 'Got connection, creating handler'
-  call ctx.dataTillRegexMatchesLine(regex_conn, ctx.gotConnection)
+  let ctx = async#Exec(ctx)
 
   let g:envim.serverCtx = ctx
+
+  " py ServerOutput().showServerOutput()
 endfun
 
 " start swank client thanks to async exec
 fun! envim#StartSwankClient()
 
-  if has_key(g:envim, 'swankClientCtx')
+  if has_key(g:envim, 'ensimeClientCtx')
     echoe("Ensime swank client already started")
     return
   endif
@@ -123,13 +138,13 @@ fun! envim#StartSwankClient()
 
   let cmd = g:envim['path-ensime-common'].'/bin/EnsimeClient.py -r -f '.shellescape(g:envim.portfile)
   let ctx = async#Exec({'cmd':cmd})
-  let g:envim.swankClientCtx = ctx
+  let g:envim.ensimeClientCtx = ctx
 
   fun! ctx.receive(data, ...)
     python SwankProcessor().process(vim.eval('a:data'))
   endfun
 
-  python SwankProcessor().setSendFunction(writeToEnsimeClient)
+  python SwankProcessor().setSendFunction(Envim().sendToEnsimeClient)
 
   call feedkeys('envim#Go()')
 endfun
@@ -137,26 +152,50 @@ endfun
 " get server connection info and initialize current project
 fun! envim#connectionAndProjectInit()
   " vi doesn't want to execute a call right after setSendFunction() - ?
-  py envimConnectionAndProjectInit()
+  py Envim().connectionAndProjectInit()
 endfun
 
 fun! envim#ShutdownServer()
-  py envimShutdownServer()
+  py Envim().shutdownServer()
 endfun
 
 fun! envim#TypecheckFile()
-  py envimTypecheckFile()
+  py Envim().typecheckFile()
 endfun
 
 fun! envim#TypecheckAll()
-  py envimTypecheckAll()
+  py Envim().typecheckAll()
 endfun
 
 fun! envim#SymbolAtPoint()
-  py envimSymbolAtPoint()
+  py Envim().symbolAtPoint()
 endfun
 
 fun! envim#UsesOfSymbolAtPoint()
-  py envimUsesOfSymbolAtPoint()
+  py Envim().usesOfSymbolAtPoint()
+endfun
+
+fun! envim#OnCursorMoved()
+  py Envim().onCursorMoved()
+endfun
+
+fun! envim#logEvent(event)
+  py elog().debug("envim#logEvent: %s", vim.eval("a:event"))
+endfun
+
+fun! envim#Completions(findstart, base)
+  if !pumvisible()
+    py elog().debug("envim#Completion")
+    py Envim().completions(int(vim.eval("a:findstart")), vim.eval("a:base"))
+  endif
+  return completion_result
+endfun
+
+fun! envim#detectEndCompletions()
+  if has_key(g:envim, 'showCompletions') && !pumvisible()
+    py elog().debug("envim#detectEndCompletions")
+    unlet g:envim.showCompletions
+    call abeans#continueMessages()
+  endif
 endfun
 

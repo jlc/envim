@@ -25,29 +25,31 @@ from SwankProtocol import *
 
 log = logging.getLogger('envim')
 
-@SimpleSingleton
-class State(object):
+class VimBufferHelper:
   def __init__(self):
-    self.initialized = False
-    self.indexerReady = False
-    self.compilerReady = False
-    self.fullTypecheckFinished = False
-    self.scalaNotes = []
-    self.javaNotes = []
+    pass
 
-# TODO: Transform checkInitialized() and checkCompilerReady() in to decorator?
-def checkInitialized():
-  if not State().initialized:
-    echoe("Project is not initialized. Ensure you have a .ensime project file and start using `:Envim`.")
-    return False
-  return True
+  def hiddenBufferOptions(self):
+    return [
+      ('buftype', "'nofile'"),
+      ('bufhidden', "'hide'"),
+      ('swapfile', "0"),
+      ('buflisted', "0"),
+      ('lazyredraw', "0")
+    ]
 
-def checkCompilerReady():
-  if not checkInitialized(): return False
-  if not State().compilerReady:
-    echoe("Compiler is not ready yet.")
-    return False
-  return True
+  def discretBufferOptions(self):
+    return [
+      ('cursorline', "0"),
+      ('nu', "0")
+    ]
+
+  def setBufferOptions(self, id, options, extraCmds=[]):
+    cmds = ["call setbufvar(%d, '&%s', %s)" % (id, opt, value) for opt, value in options]
+    cmds.extend(extraCmds)
+    c = "\n".join(cmds)
+    #log.debug("VimBufferHelper.setBufferOptions: %s", c)
+    vim.command(c)
 
 #
 # Vim Helpers functions
@@ -68,60 +70,66 @@ def decho(s):
   log.debug(s)
   vim.command("Decho('"+s+"')")
 
-def writeToEnsimeClient(data):
-  vim.eval("g:envim.swankClientCtx.write('"+data+"')")
-
 def getCurrentOffset():
   return int(vim.eval('line2byte(line("."))+col(".")'))-1
 
 def getCurrentFilename():
   filename = vim.eval("expand('%')")
   if filename != None:
+    # TODO: check if this is still correct after :lcd path
     filename = os.getcwd() + '/' + filename
   return filename
 
+def getBeforeAndAfterCursor():
+  col = int(vim.eval("col('.')"))
+  line = vim.eval("line('.')")
+  before = line[:col]
+  after = line[col:]
+  return (before, after)
+
+def listOfDictToString(li):
+  o = '['
+
+  nlist = len(li)
+  for de in li:
+    nlist -= 1
+
+    o += '{'
+    ndict = len(de.keys())
+    for k in de.keys():
+      ndict -= 1
+
+      o += "'"+k+"'" + ':'
+      if isinstance(de[k], types.StringType):
+        o += '"' + de[k].replace('"', '\\"') + '"'
+      else:
+        o += str(de[k])
+
+      if ndict > 0: o += ','
+
+    o += '}'
+    if nlist > 0: o += ','
+
+  o += ']'
+  return o
 
 def setQuickFixList(qflist):
-  def listOfDictToString(li):
-    o = '['
-
-    nlist = len(li)
-    for de in li:
-      nlist -= 1
-
-      o += '{'
-      ndict = len(de.keys())
-      for k in de.keys():
-        ndict -= 1
-
-        o += "'"+k+"'" + ':'
-        if isinstance(de[k], types.StringType):
-          o += '"' + de[k].replace('"', '\\"') + '"'
-        else:
-          o += str(de[k])
-
-        if ndict > 0: o += ','
-
-      o += '}'
-      if nlist > 0: o += ','
-
-    o += ']'
-    return o
-
   o = listOfDictToString(qflist)
   log.debug("Quick fix list: ")
   log.debug(o)
 
   vim.command("call setqflist("+o+")")
 
-  return
-
+  # with vim-async patch:
   # if we execute these, they won't be any syntax colorization in the qflist window
   # Note: find a way to delay the execution of them
+  # or: the buffer may get inversed
   if len(qflist) > 0:
-    vim.command("copen")
+    cmds = ["copen", "redraw"]
+    vim.command("\n".join(cmds))
   else:
-    vim.command("cclose")
+    cmds = ["cclose", "redraw"]
+    vim.command("\n".join(cmds))
 
 def saveFile():
   vim.command("w")
