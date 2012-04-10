@@ -15,7 +15,6 @@ Currently, few ensime's features have been integrated:
 - Use of the symbol under cursor
 
 - Completion
-(please, tolerate some weird behaviors for few more days)
 
 
 ## Getting started
@@ -39,15 +38,19 @@ In your .vimrc, add ensime, vim-async-beans, ensime-common and envim plugins as 
       let g:vim_addon_manager.plugin_sources['ensime-common'] = {"type": "git", "url": "git://github.com/jlc/ensime-common.git", "branch" : "master"}
       let g:vim_addon_manager.plugin_sources['vim-async-beans'] = {"type": "git", "url": "git://github.com/jlc/vim-async-beans.git", "branch" : "master"}
       let g:vim_addon_manager.plugin_sources['vim-addon-async'] = {"type": "git", "url": "git://github.com/jlc/vim-addon-async.git", "branch" : "master"}
+
       let g:vim_addon_manager.plugin_sources['vim-scala-behaghel'] = {'type': 'git', 'url': 'git://github.com/behaghel/vim-scala.git'}
       
       let plugins = [
-        \ 'tlib', 'tmru', 'Decho', 'gnupg3645',
-        \ 'fugitive', 'gitv', 'Command-T',
-        \ 'vim-addon-mw-utils',
-        \ 'vim-addon-signs', 'vim-addon-async', 'vim-addon-completion',
-        \ 'vim-addon-json-encoding', 'vim-scala-behaghel',
-        \ 'envim', 'ensime', 'ensime-common', 'vim-async-beans',
+        \ 'tlib', 'tmru', 'Decho',
+        \ 'gnupg3645',
+        \ 'fugitive', 'gitv',
+        \ 'Command-T',
+        \ 'vim-addon-async',
+        \ 'vim-async-beans',
+        \ 'vim-scala-behaghel',
+        \ 'ensime', 'ensime-common',
+        \ 'envim'
         \ ]
 
       call vam#ActivateAddons(plugins,{'auto_install' : 0})
@@ -60,7 +63,6 @@ In your .vimrc, add ensime, vim-async-beans, ensime-common and envim plugins as 
 Start vim.
 
 vim-addon-manager will ask you to download and install the missing plugins and their dependencies.
-
 
 ### Build ensime
 
@@ -116,8 +118,6 @@ Next, open a Scala source and try '<leader>ef' or '<leader>ea' for typechecking 
 
 - You may notice 2 buffers called vim-async-beans.out and vim-async-beans.in.
 They are created and used by vim-async-beans in order to help vim to communicate with the outside world. Most of the time, they are not modifiable. However, it is advised to simply ignore them and return to your favorite Scala sources.
-
-- Completions is still work-in-progress for few more days.
 
 - This plugin is still fresh out of its eggs. I would much appreciate any feedbacks: jeanluc [at] lo.cx
 
