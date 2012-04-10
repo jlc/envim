@@ -149,7 +149,7 @@ class PreviewOutput(VimBufferHelper):
     id = self.bufferId - 1
     vim.buffers[id][:] = lines
 
-    options = []
+    options = self.discretBufferOptions()
     options.extend([
       ('statusline', "'%='")
     ])
