@@ -6,10 +6,9 @@
   "repository" : {"type": "git", "url": "git://github.com/jlc/envim.git", "branch" : "master"},
   "dependencies" : {
     "vim-addon-async": {},
-    "vim-addon-completion": {},
-    "vim-addon-signs": {},
-    "vim-addon-mw-utils": {},
-    "ensime-common": {}
+    "vim-async-beans": {},
+    "ensime-common": {},
+    "ensime": {}
   },
-  "description" : "ENsime VIm: Vim integration of The famous Ensime"
+  "description" : "ENsime for VIM"
 }
