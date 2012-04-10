@@ -151,6 +151,7 @@ class CompletionsHandler(SwankCallHandler):
   def response(self, completions):
     if not completions or not completions.has('completions'):
       echo("Empty completions")
+      OmniOutput().continueMessages()
       return
 
     isCallableToVim = {True: 'f', False: 'v'}
