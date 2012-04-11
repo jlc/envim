@@ -196,6 +196,7 @@ fun! envim#detectEndCompletions()
     py elog().debug("envim#detectEndCompletions")
     unlet g:envim.showCompletions
     call abeans#continueMessages()
+    pclose
   endif
 endfun
 
