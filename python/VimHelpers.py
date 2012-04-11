@@ -100,8 +100,11 @@ def listOfDictToString(li):
       ndict -= 1
 
       o += "'"+k+"'" + ':'
-      if isinstance(de[k], types.StringType):
-        o += '"' + de[k].replace('"', '\\"') + '"'
+      if isinstance(de[k], types.StringType) or isinstance(de[k], types.UnicodeType):
+        # TODO: the value may be utf-8 which does not appear to be handled in vim's omnicompletion
+        # check if there is a way and if we can avoid this 'replace'
+        value = de[k].encode('ascii', 'replace')
+        o += '"' + value.replace('"', '\\"') + '"'
       else:
         o += str(de[k])
 
