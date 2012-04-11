@@ -175,10 +175,6 @@ fun! envim#UsesOfSymbolAtPoint()
   py Envim().usesOfSymbolAtPoint()
 endfun
 
-fun! envim#OnCursorMoved()
-  py Envim().onCursorMoved()
-endfun
-
 fun! envim#logEvent(event)
   py elog().debug("envim#logEvent: %s", vim.eval("a:event"))
 endfun
@@ -200,3 +196,18 @@ fun! envim#detectEndCompletions()
   endif
 endfun
 
+fun! envim#onCursorMoved()
+  py Envim().onCursorMoved()
+endfun
+
+fun! envim#onQuickFixLeave()
+  py Envim().onQuickFixLeave()
+endfun
+
+fun! envim#onWinLeave()
+  py Envim().onWinLeave()
+endfun
+
+fun! envim#onTabLeave()
+  py Envim().onTabLeave()
+endfun

@@ -103,7 +103,18 @@ class Envim:
   @CatchAndLogException
   def onCursorMoved(self):
     PreviewOutput().close()
+
+  @CatchAndLogException
+  def onQuickFixLeave(self):
+    QuickFixOutput().close()
+
+  @CatchAndLogException
+  def onWinLeave(self):
     pass
+
+  @CatchAndLogException
+  def onTabLeave(self):
+    PreviewOutput().close()
 
   @CatchAndLogException
   def completions(self, findstart, base):

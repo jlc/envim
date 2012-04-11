@@ -55,6 +55,10 @@ class VimBufferHelper:
 # Vim Helpers functions
 #
 
+# execute a list of commands
+def vimCommands(listCmds):
+  vim.command("\n".join(listCmds))
+
 # normal echo (in vim command line)
 def echo(s):
   log.info(s)
@@ -115,24 +119,6 @@ def listOfDictToString(li):
 
   o += ']'
   return o
-
-def setQuickFixList(qflist):
-  o = listOfDictToString(qflist)
-  log.debug("Quick fix list: ")
-  log.debug(o)
-
-  vim.command("call setqflist("+o+")")
-
-  # with vim-async patch:
-  # if we execute these, they won't be any syntax colorization in the qflist window
-  # Note: find a way to delay the execution of them
-  # or: the buffer may get inversed
-  if len(qflist) > 0:
-    cmds = ["copen", "redraw"]
-    vim.command("\n".join(cmds))
-  else:
-    cmds = ["cclose", "redraw"]
-    vim.command("\n".join(cmds))
 
 def saveFile():
   vim.command("w")

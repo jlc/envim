@@ -98,7 +98,7 @@ class PreviewOutput(VimBufferHelper):
     VimBufferHelper.__init__(self)
     self.bufferId = 0
     self.filename = "ENSIME_PREVIEW"
-    self.isOpened = False
+    self.isOpen = False
 
   # Private
 
@@ -127,10 +127,11 @@ class PreviewOutput(VimBufferHelper):
     ]
 
     self.setBufferOptions(self.bufferId, options, extraCmds)
-  
+
   @CatchAndLogException
   def set(self, lines=[]):
-    if isinstance(lines, types.StringType): lines = [lines]
+    if isinstance(lines, types.StringType) or isinstance(lines, types.UnicodeType):
+      lines = [lines.encode('ascii', 'replace')]
     elif isinstance(lines, types.ListType): pass
     else: log.error("PreviewOutput.set: lines is not of List neither String type")
 
@@ -141,7 +142,6 @@ class PreviewOutput(VimBufferHelper):
       "pc",
       "pedit %s" % (self.filename),
     ]
-
     vim.command("\n".join(cmds))
 
     self.clear()
@@ -160,13 +160,13 @@ class PreviewOutput(VimBufferHelper):
 
     self.setBufferOptions(self.bufferId, options, cmds)
 
-    self.isOpened = True
+    self.isOpen = True
 
   @CatchAndLogException
   def close(self):
-    if self.isOpened:
+    if self.isOpen:
       vim.command("pc")
-      self.isOpened = False
+      self.isOpen = False
 
 @SimpleSingleton
 class OmniOutput:
@@ -197,4 +197,32 @@ class OmniOutput:
 
   def continueMessages(self):
     vim.command("call abeans#continueMessages()")
+
+@SimpleSingleton
+class QuickFixOutput:
+  def __init__(self):
+    self.isOpen = False
+
+  def open(self):
+    if not self.isOpen:
+      cmds = ["copen", "redraw"]
+      vimCommands(cmds)
+      self.isOpen = True
+
+  def close(self):
+    if self.isOpen:
+      cmds = ["cclose", "redraw"]
+      vimCommands(cmds)
+      self.isOpen = False
+
+  def clear(self):
+    self.set([])
+
+  def set(self, qflist):
+    o = listOfDictToString(qflist)
+
+    cmds = [ 
+      "call setqflist(%s)" % (o),
+    ]
+    vimCommands(cmds)
 

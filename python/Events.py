@@ -16,44 +16,51 @@
 
 import logging
 from EnvimTools import *
+from EnvimOutputs import *
 from VimHelpers import *
 
 log = logging.getLogger('envim')
 
 @SwankEventBackgroundMessage
 def backgroundMessage(code, details):
-  log.debug('Background message: '+codeDetailsString(code, details))
-  echo(details)
+  s = codeDetailsString(code, details)
+  log.info('Background message: '+s)
+  echo(s)
 
 @SwankEventReaderError
 def readerError(code, details):
-  echoe('Reader error: '+codeDetailsString(code, details))
+  s = codeDetailsString(code, details)
+  log.error('Reader error: '+s)
+  echo(s)
 
 @SwankEventCompilerReady
 def compilerReady():
   State().compilerReady = True
   echo("Compiler ready")
 
-@SwankEventFullTypecheckFinished
-def fullTypecheckFinished():
-  echo("Full typecheck finished")
-
 @SwankEventIndexerReady
 def indexerReady():
   State().indexerReady = True
   echo("Indexer ready")
+
+@SwankEventFullTypecheckFinished
+def fullTypecheckFinished():
+  echo("Full typecheck finished")
+
+  if len(State().scalaNotes) > 0:
+    qflist = notesToQuickFixList(State().scalaNotes)
+    QuickFixOutput().set(qflist)
+    QuickFixOutput().open()
 
 @SwankEventScalaNotes
 def scalaNotes(notes):
   # notes.is_full True|False
   # notes.notes = []
 
-  if (notes.is_full):
-    log.debug("Full scala notes list, clear previous list")
-
-    qflist = notesToQuickFixList(notes.notes)
+  if notes.is_full:
+    log.debug("scalaNotes: Full scala notes list, clear previous list")
   else:
-    log.debug("Partial scala notes list")
+    log.debug("scalaNotes: Partial scala notes list")
 
     # here we prepend existing notes
     notes.notes.reverse()
@@ -61,28 +68,26 @@ def scalaNotes(notes):
     notes.notes.extend(State().scalaNotes)
     notes.notes.reverse()
 
-    qflist = notesToQuickFixList(notes.notes)
-
-  if len(qflist) > 0:
-    setQuickFixList(qflist)
-
   State().scalaNotes = notes.notes
+
+  echo("Typechecking in progress...")
 
 @SwankEventClearAllScalaNotes
 def clearAllScalaNotes():
-  log.debug("Clear all Scala notes")
+  log.debug("clearAllScalaNotes: Clear all Scala notes")
 
-  setQuickFixList([])
+  QuickFixOutput().clear()
+  QuickFixOutput().close()
 
   State().scalaNotes = []
 
 @SwankEventJavaNotes
 def javaNotes():
+  log.debug("javaNotes: TODO: Implement Java notes")
   echoe("Java notes: TODO to implement")
 
 @SwankEventClearAllJavaNotes
 def clearAllJavaNotes():
-  #echoe("Clear all Java notes: TODO to implement")
-  pass
+  log.debug("clearAllJavaNotes: TODO: Implement clear Java notes")
 
 
