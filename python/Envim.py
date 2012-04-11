@@ -106,20 +106,6 @@ class Envim:
     pass
 
   @CatchAndLogException
-  def simpleCompletion(self):
-    log.debug("Envim.simpleCompletion")
-    vim.command("silent update")
-
-    filename = getCurrentFilename()
-    if filename == None:
-      echoe("Unknown current filename")
-    else:
-      offset = getCurrentOffset()
-      log.debug("Envim.simpleCompletion: SwankRpc()")
-      SwankRpc().completions(filename, offset, 30, False)(CompletionsHandler())
-
-
-  @CatchAndLogException
   def completions(self, findstart, base):
     log.debug("Envim.completions: findstart: %d %s base: %s", findstart, str(findstart.__class__), base)
 
@@ -153,7 +139,7 @@ class Envim:
         offset = getCurrentOffset()
 
         self.setPauseAfter(1)
-        SwankRpc().completions(filename, offset, 10, False)(CompletionsHandler())
+        SwankRpc().completions(filename, offset, 0, False)(CompletionsHandler())
 
       vim.command("let completion_result = []")
 

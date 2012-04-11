@@ -197,3 +197,4 @@ class OmniOutput:
 
   def continueMessages(self):
     vim.command("call abeans#continueMessages()")
+
