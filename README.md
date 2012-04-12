@@ -64,6 +64,12 @@ Start vim.
 
 vim-addon-manager will ask you to download and install the missing plugins and their dependencies.
 
+### Git add remote and pull already cloned projects
+
+Take care of your already cloned project (such as vim-addon-async):
+- git add remote jlc https://github.com/jlc/<project>
+- pull last changes
+
 ### Build ensime
 
 Ensime needs to be build using the latest sbt : [xsbt wiki](https://github.com/harrah/xsbt/wiki).
