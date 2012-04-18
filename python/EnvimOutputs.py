@@ -130,9 +130,12 @@ class PreviewOutput(VimBufferHelper):
 
   @CatchAndLogException
   def set(self, lines=[]):
+    def enc(s): return s.encode('ascii', 'replace')
+
     if isinstance(lines, types.StringType) or isinstance(lines, types.UnicodeType):
-      lines = [lines.encode('ascii', 'replace')]
-    elif isinstance(lines, types.ListType): pass
+      lines = [enc(lines)]
+    elif isinstance(lines, types.ListType):
+      lines = [enc(l) for l in lines]
     else: log.error("PreviewOutput.set: lines is not of List neither String type")
 
     # note: show preview edit before updating it, and then redraw
