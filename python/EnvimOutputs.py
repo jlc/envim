@@ -196,7 +196,6 @@ class OmniOutput:
     return s
 
   def showCompletions(self):
-    vim.command("let g:envim.showCompletions = 1")
     vim.command("call feedkeys(\"\<c-x>\<c-o>\")")
 
   def pauseMessages(self):

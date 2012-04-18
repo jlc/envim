@@ -163,6 +163,7 @@ class Envim:
   @CatchAndLogException
   def showCompletions(self, findstart, base):
     log.debug("Envim.showCompletions:")
+    vim.command("let g:envim.showCompletions = 1")
 
     if findstart == 1:
       vim.command("let completion_result = %d" % (OmniOutput().getStart()))
