@@ -154,12 +154,17 @@ class CompletionsHandler(SwankCallHandler):
       OmniOutput().continueMessages()
       return
 
+    reBase = None
+    if OmniOutput().getBase() != '':
+      reBase = re.compile("^%s.*" % (OmniOutput().getBase()))
+
     isCallableToVim = {True: 'f', False: 'v'}
 
-    log.debug("CompletionsHandler.response: ")
+    log.debug("CompletionsHandler.response:")
 
     out = [{'word':completions.prefix}]
     for comp in completions.completions:
+      if reBase != None and reBase.match(comp.name) == None: continue
       d = {}
       d['word'] = comp.name
       d['info'] = comp.type_sig
@@ -167,6 +172,8 @@ class CompletionsHandler(SwankCallHandler):
         d['kind'] = isCallableToVim[comp.is_callable]
 
       out.append(d)
+
+    out = sorted(out, key=lambda d: d['word'])
 
     OmniOutput().setResults(out)
 

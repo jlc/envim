@@ -172,7 +172,14 @@ class PreviewOutput(VimBufferHelper):
 class OmniOutput:
   def __init__(self):
     self.start = 0
+    self.base = ''
     self.results = [] # list of dicts
+
+  def setBase(self, base):
+    self.base = base
+
+  def getBase(self):
+    return self.base
 
   def setStart(self, start):
     self.start = start

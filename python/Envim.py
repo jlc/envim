@@ -154,6 +154,8 @@ class Envim:
 
       vim.command("let completion_result = []")
 
+      OmniOutput().setBase(base)
+
       self.currentCompletions = self.showCompletions
 
     log.debug("Envim.beginCompletions: completion_result: %s", vim.eval("completion_result"))
