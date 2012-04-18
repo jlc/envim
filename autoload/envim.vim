@@ -188,11 +188,13 @@ fun! envim#Completions(findstart, base)
 endfun
 
 fun! envim#detectEndCompletions()
-  if has_key(g:envim, 'showCompletions') && !pumvisible()
-    py elog().debug("envim#detectEndCompletions")
-    unlet g:envim.showCompletions
-    call abeans#continueMessages()
-    pclose
+  if pumvisible() == 0
+    if has_key(g:envim, 'showCompletions')
+      py elog().debug("envim#detectEndCompletions")
+      unlet g:envim.showCompletions
+      call abeans#continueMessages()
+      pclose
+    endif
   endif
 endfun
 
