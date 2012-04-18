@@ -140,7 +140,8 @@ class UsesOfSymbolAtPointHandler(SwankCallHandler):
 
     qflist = rangePosToQuickFixList(rangePosList)
 
-    setQuickFixList(qflist)
+    QuickFixOutput().set(qflist)
+    QuickFixOutput().open()
 
 @SimpleSingleton
 class CompletionsHandler(SwankCallHandler):
