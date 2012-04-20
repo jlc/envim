@@ -133,6 +133,15 @@ def editAtOffset(filename, offset):
 def codeDetailsString(code, detail):
   return ProtocolConst.toStr(code)+'('+str(code)+') : '+detail
 
+def getEnsimeConfigFile():
+    configFile = os.getcwd() + '/' + '.ensime'
+    if not os.path.isfile(configFile):
+      # todo: set a variable and add a function so to be able to restart connection-info
+      echoe("Ensime configuration file (%s) doest not exist" % (configFile))
+      return None
+
+    return configFile
+
 def ensimeConfigToPython(filename):
   try: f = file(filename)
   except:

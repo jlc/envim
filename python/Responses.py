@@ -34,13 +34,13 @@ class ConnectionInfoHandler(SwankCallHandler):
 
     echo("server: "+r.implementation.name+" ("+r.version+") "+spid)
 
-    configFile = os.getcwd() + '/' + '.ensime'
-    if not os.path.isfile(configFile):
-      # todo: set a variable and add a function so to be able to restart connection-info
-      echoe("Ensime configuration file ("+configFile+") doest not exist")
+    configFile = getEnsimeConfigFile()
+    if configFile == None:
       return
 
     config = ensimeConfigToPython(configFile)
+    if config == None:
+      return
 
     SwankRpc().projectInit(config)(InitProjectHandler())
 

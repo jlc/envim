@@ -87,6 +87,8 @@ fun! envim#StartServer()
     return
   endif
 
+  py if getEnsimeConfigFile() == None: vim.command("return")
+
   if !exists('*async_exec') || has('gui_running')
     if !vam#IsPluginInstalled('vim-async-beans')
       echoe("Error: vim-async-beans is not installed.")
