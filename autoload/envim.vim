@@ -68,10 +68,6 @@ if lastDist == None:
 ensimeDistPath = ensimePath + os.path.sep + lastDist
 vim.command("let g:envim['path-ensime-dist'] = get(g:envim, 'path-ensime-dist', '"+ensimeDistPath+"')")
 
-# setup logger
-initLog('ensime-common', 'envim.log')
-initLog('envim', 'envim.log')
-
 def elog(): return logging.getLogger('envim')
 
 # not ready to send anything to ensime yet
@@ -89,6 +85,9 @@ fun! envim#StartServer()
   endif
 
   py if getEnsimeConfigFile() == None: vim.command("return")
+
+  py initLog('ensime-common', 'envim.log')
+  py initLog('envim', 'envim.log')
 
   if !exists('*async_exec') || has('gui_running')
     if !vam#IsPluginInstalled('vim-async-beans')
