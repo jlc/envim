@@ -33,7 +33,7 @@ augroup ENVIM
   au!
   " autocmd BufWritePost *.scala if !g:envim.prevent_typecheck | call envim#TypecheckFile() | endif
   autocmd VimLeave * call envim#ShutdownServer()
-  autocmd CursorMoved,CursorMovedI * call envim#onCursorMoved()
+  autocmd CursorMoved,CursorMovedI *.scala call envim#onCursorMoved()
 
   autocmd CursorMovedI,InsertLeave *.scala call envim#detectEndCompletions()
 

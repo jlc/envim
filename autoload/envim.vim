@@ -31,6 +31,7 @@ if !vam#IsPluginInstalled('ensime-common')
   finish
 endif
 
+let g:envim['started'] = get(g:envim, 'started', 0)
 let g:envim['path-ensime'] = get(g:envim, 'path-ensime', vam#DefaultPluginDirFromName('ensime'))
 let g:envim['path-ensime-common'] = get(g:envim, 'path-ensime-common', vam#DefaultPluginDirFromName('ensime-common'))
 let g:envim['path-envim'] = get(g:envim, 'path-envim', expand('<sfile>:h:h'))
@@ -82,7 +83,7 @@ fun! envim#StartServer()
 
   "redir >> ./envim_command_output.log
 
-  if has_key(g:envim, 'serverCtx')
+  if g:envim.started == 1
     echoe("Ensime server already started")
     return
   endif
@@ -122,6 +123,7 @@ fun! envim#StartServer()
 
   let g:envim.serverCtx = ctx
 
+  let g:envim.started = 1
   " py ServerOutput().showServerOutput()
 endfun
 
@@ -158,6 +160,7 @@ fun! envim#connectionAndProjectInit()
 endfun
 
 fun! envim#ShutdownServer()
+  if g:envim.started == 0 | return | endif
   py Envim().shutdownServer()
 endfun
 
@@ -182,6 +185,7 @@ fun! envim#logEvent(event)
 endfun
 
 fun! envim#Completions(findstart, base)
+  if g:envim.started == 0 | return | endif
   if !pumvisible()
     py elog().debug("envim#Completion")
     py Envim().completions(int(vim.eval("a:findstart")), vim.eval("a:base"))
@@ -190,6 +194,7 @@ fun! envim#Completions(findstart, base)
 endfun
 
 fun! envim#detectEndCompletions()
+  if g:envim.started == 0 | return | endif
   if pumvisible() == 0
     if has_key(g:envim, 'showCompletions')
       py elog().debug("envim#detectEndCompletions")
@@ -201,17 +206,21 @@ fun! envim#detectEndCompletions()
 endfun
 
 fun! envim#onCursorMoved()
+  if g:envim.started == 0 | return | endif
   py Envim().onCursorMoved()
 endfun
 
 fun! envim#onQuickFixLeave()
+  if g:envim.started == 0 | return | endif
   py Envim().onQuickFixLeave()
 endfun
 
 fun! envim#onWinLeave()
+  if g:envim.started == 0 | return | endif
   py Envim().onWinLeave()
 endfun
 
 fun! envim#onTabLeave()
+  if g:envim.started == 0 | return | endif
   py Envim().onTabLeave()
 endfun
