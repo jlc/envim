@@ -17,6 +17,21 @@ Currently, few ensime's features have been integrated:
 - Completion
 
 
+## Important notes
+
+Envim requires vim to be asynchronous aware, which means to be able to receive messages from Ensime in the background.
+This is quite a challenge for vim. There are not so many options to achieve this goal.
+
+The one which is used here has been designed with console based vimmers in mind (thus without relying on GVim features), and this is how vim-async-beans is born (cf. "Behind the scene").
+It may be quite a good choice while waiting for a native vim async implementation.
+
+However, it require 2 vim buffers in order to communicate with the outside world.
+These buffers are a) hidden, and b) readonly and unmodifiable by default.
+But, at some point, it is possible that you automatically "jump" on one of them without asking for.
+
+This may be anoying, but also may conflict with some configuration and/or plugins.
+In order to better address this issue, I would much appreciate any feedbacks about your experience using Envim.
+
 ## Getting started
 
 ### Install vim-addon-manager
@@ -131,7 +146,7 @@ They are created and used by vim-async-beans in order to help vim to communicate
 ## Behind the scene
 
 Envim needed asynchronous communications with external processes in order to talk with ensime.
-Among several ways to do so, 2 methods have been implemented: vim-async-beans and a patch applied to vim (of course, there may be other ways).
+Among several ways to do so, 2 methods have been implemented: vim-async-beans and a patch applied to vim (of course, there may be other ways like vim-addon-async which use the client-server implementation).
 
 As a side note, these methods have been developed in order to provide a satisfying solution to vimmers who prefer the console version as opposed to GUI mode.
 However, both methods should equaly works in a GUI mode, but have not been tested at all.
