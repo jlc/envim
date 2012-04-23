@@ -139,7 +139,7 @@ fun! envim#StartSwankClient()
     return
   endif
 
-  let cmd = g:envim['path-ensime-common'].'/bin/EnsimeClient.py -r -f '.shellescape(g:envim.portfile)
+  let cmd = g:envim['path-ensime-common'].'/bin/EnsimeClient.py -R -f '.shellescape(g:envim.portfile)
   let ctx = async#Exec({'cmd':cmd})
   let g:envim.ensimeClientCtx = ctx
 
