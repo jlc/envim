@@ -84,10 +84,10 @@ fun! envim#StartServer()
     return
   endif
 
-  py if getEnsimeConfigFile() == None: vim.command("return")
-
   py LogSetup().setup('ensime-common', 'envim.log')
   py LogSetup().setup('envim', 'envim.log')
+
+  py if getEnsimeConfigFile() == None: vim.command("return")
 
   if !exists('*async_exec') || has('gui_running')
     if !vam#IsPluginInstalled('vim-async-beans')
