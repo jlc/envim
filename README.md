@@ -32,9 +32,44 @@ But, at some point, it is possible that you automatically "jump" on one of them 
 This may be anoying, but also may conflict with some configuration and/or plugins.
 In order to better address this issue, I would much appreciate any feedbacks about your experience using Envim.
 
+
 ## Getting started
 
-### Install vim-addon-manager
+NOTE: Envim is currently evolving a lot, you should then frequently pull it.
+
+When updating Envim, be careful to update its 2 main dependencies:
+
+- vim-async-beans
+
+and
+
+- ensime-common
+
+### Install vim plugins
+
+#### Dependencies
+
+Required dependencies:
+- [ensime](https://github.com/aemoncannon/ensime)
+
+- [envim](https://github.com/jlc/envim)
+
+- [ensime-common](https://github.com/jlc/ensime-common)
+
+- [vim-async-beans](https://github.com/jlc/vim-async-beans)
+
+- [vim-addon-async](https://github.com/jlc/vim-addon-async) forked from [vim-addon-async](https://github.com/MarcWeber/vim-addon-async)
+
+- [vim-addon-signs](https://github.com/MarcWeber/vim-addon-signs) required by vim-addon-async
+
+- [vim-addon-manager](https://github.com/MarcWeber/vim-addon-manager) (this dependency will be removed soon)
+
+#### Manually
+
+In theory, manual installation may be done by loading the required plugins as listed above.
+In practice, this simple theory may not be as easy. Any suggestion?
+
+#### Using vim-addon-manager
 
 vim-addon-manager is an amazing plugin manager, check it out here: [vim-addon-manager](https://github.com/MarcWeber/vim-addon-manager).
 
@@ -54,17 +89,11 @@ In your .vimrc, add ensime, vim-async-beans, ensime-common and envim plugins as 
       let g:vim_addon_manager.plugin_sources['vim-async-beans'] = {"type": "git", "url": "git://github.com/jlc/vim-async-beans.git", "branch" : "master"}
       let g:vim_addon_manager.plugin_sources['vim-addon-async'] = {"type": "git", "url": "git://github.com/jlc/vim-addon-async.git", "branch" : "master"}
 
-      let g:vim_addon_manager.plugin_sources['vim-scala-behaghel'] = {'type': 'git', 'url': 'git://github.com/behaghel/vim-scala.git'}
-      
       let plugins = [
-        \ 'tlib', 'tmru', 'Decho',
-        \ 'gnupg3645',
-        \ 'fugitive', 'gitv',
-        \ 'Command-T',
+        \ 'ensime',
         \ 'vim-addon-async',
         \ 'vim-async-beans',
-        \ 'vim-scala-behaghel',
-        \ 'ensime', 'ensime-common',
+        \ 'ensime-common',
         \ 'envim'
         \ ]
 
@@ -75,9 +104,26 @@ In your .vimrc, add ensime, vim-async-beans, ensime-common and envim plugins as 
     endf
     call SetupVAM()
 
+
+Optionaly for Scala syntax:
+
+      let g:vim_addon_manager.plugin_sources['vim-scala-behaghel'] = {'type': 'git', 'url': 'git://github.com/behaghel/vim-scala.git'}
+
+      let plugins = [
+        ...
+        \ 'vim-scala-behaghel',
+        ...
+        ]
+
 Start vim.
 
 vim-addon-manager will ask you to download and install the missing plugins and their dependencies.
+
+
+#### Using pathogen
+
+Due to the fact that I still have to learn pathogen, the completion of this section may wait a little while, except if someone would like to help me to do so.
+
 
 ### Git add remote and pull already cloned projects
 
