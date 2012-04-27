@@ -40,9 +40,7 @@ augroup ENVIM
   autocmd TabLeave * call envim#onTabLeave()
   autocmd WinLeave * call envim#onWinLeave()
 
-  autocmd BufWinLeave quickfix call envim#onQuickFixLeave()
-  autocmd BufReadPost quickfix setlocal nonu nocursorline
-  autocmd BufReadPost preview setlocal nonu nocursorline
+  autocmd BufWinEnter preview setlocal nonu nocursorline
 
   autocmd BufRead,BufNewFile .ensime  setlocal ft=default.ensime
 augroup end

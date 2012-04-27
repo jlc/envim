@@ -209,11 +209,6 @@ fun! envim#onCursorMoved()
   py Envim().onCursorMoved()
 endfun
 
-fun! envim#onQuickFixLeave()
-  if g:envim.started == 0 | return | endif
-  py Envim().onQuickFixLeave()
-endfun
-
 fun! envim#onWinLeave()
   if g:envim.started == 0 | return | endif
   py Envim().onWinLeave()

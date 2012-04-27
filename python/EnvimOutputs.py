@@ -210,19 +210,17 @@ class OmniOutput:
 @SimpleSingleton
 class QuickFixOutput:
   def __init__(self):
-    self.isOpen = False
+    pass
 
   def open(self):
-    if not self.isOpen:
-      cmds = ["copen", "redraw"]
-      vimCommands(cmds)
-      self.isOpen = True
+    cmds = ["copen", "setlocal nonu", "setlocal nocursorline", "redraw"]
+    vimCommands(cmds)
+    self.isOpen = True
 
   def close(self):
-    if self.isOpen:
-      cmds = ["cclose", "redraw"]
-      vimCommands(cmds)
-      self.isOpen = False
+    cmds = ["cclose", "redraw"]
+    vimCommands(cmds)
+    self.isOpen = False
 
   def clear(self):
     self.set([])

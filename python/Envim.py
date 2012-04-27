@@ -109,10 +109,6 @@ class Envim:
     PreviewOutput().close()
 
   @CatchAndLogException
-  def onQuickFixLeave(self):
-    QuickFixOutput().close()
-
-  @CatchAndLogException
   def onWinLeave(self):
     pass
 
