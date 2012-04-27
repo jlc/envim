@@ -22,6 +22,8 @@ from Helper import SimpleSingleton
 
 log = logging.getLogger('envim')
 
+# TODO: printing error using echoe()) in Handlers raise an error in abeans#processInput() without displaying the error
+
 @SimpleSingleton
 class ConnectionInfoHandler(SwankCallHandler):
 

@@ -170,8 +170,14 @@ def ensimeConfigToPython(filename):
   log.debug("ensimeConfigToPython: reading conf:")
   log.debug(out)
 
-  sexp = SExpParser().parse(out)
-  py = sexp.toPy()
+  try:
+    sexp = SExpParser().parse(out)
+    py = sexp.toPy()
+  except:
+    err = "Error while parsing .ensime configuration file"
+    echo(err)
+    log.exception(err)
+    return None
 
   if not py.has('root_dir'):
     setattr(py, 'root_dir', os.getcwd())
