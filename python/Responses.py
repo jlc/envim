@@ -79,6 +79,8 @@ class TypecheckFileHandler(SwankCallHandler):
     if r: echo("Typechecking in progress...")
     else: echoe("Typecheck file error")
 
+    State().scalaNotes = []
+
 @SimpleSingleton
 class TypecheckAllHandler(SwankCallHandler):
 
@@ -88,6 +90,8 @@ class TypecheckAllHandler(SwankCallHandler):
   def response(self, r):
     if r: echo("Typechecking in progress...")
     else: echoe("Typecheck all error")
+
+    State().scalaNotes = []
 
 @SimpleSingleton
 class SymbolAtPointHandler(SwankCallHandler):

@@ -47,10 +47,9 @@ def indexerReady():
 def fullTypecheckFinished():
   echo("Full typecheck finished")
 
-  if len(State().scalaNotes) > 0:
-    qflist = notesToQuickFixList(State().scalaNotes)
-    QuickFixOutput().set(qflist)
-    QuickFixOutput().open()
+  qflist = notesToQuickFixList(State().scalaNotes)
+  QuickFixOutput().set(qflist)
+  QuickFixOutput().open()
 
 @SwankEventScalaNotes
 def scalaNotes(notes):
@@ -77,7 +76,6 @@ def clearAllScalaNotes():
   log.debug("clearAllScalaNotes: Clear all Scala notes")
 
   QuickFixOutput().clear()
-  QuickFixOutput().close()
 
   State().scalaNotes = []
 
