@@ -64,6 +64,8 @@ class Envim:
   def typecheckFile(self):
     if not checkCompilerReady(): return
 
+    vim.command("update")
+
     # @todo: ensure that file is in source-roots
     filename = getCurrentFilename()
     if filename == None:
@@ -74,6 +76,8 @@ class Envim:
   @CatchAndLogException
   def typecheckAll(self):
     if not checkCompilerReady(): return
+
+    vim.command("update")
 
     SwankRpc().typecheckAll()(TypecheckAllHandler())
 
