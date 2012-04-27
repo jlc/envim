@@ -137,10 +137,9 @@ class UsesOfSymbolAtPointHandler(SwankCallHandler):
   def response(self, rangePosList):
     if not rangePosList:
       echo("Symbol not used")
-      setQuickFixList([])
-      return
-
-    qflist = rangePosToQuickFixList(rangePosList)
+      qflist = []
+    else:
+      qflist = rangePosToQuickFixList(rangePosList)
 
     QuickFixOutput().set(qflist)
     QuickFixOutput().open()
