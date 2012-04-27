@@ -134,13 +134,18 @@ def codeDetailsString(code, detail):
   return ProtocolConst.toStr(code)+'('+str(code)+') : '+detail
 
 def getEnsimeConfigFile():
-    configFile = os.getcwd() + '/' + '.ensime'
-    if not os.path.isfile(configFile):
-      # todo: set a variable and add a function so to be able to restart connection-info
-      echoe("Ensime configuration file (%s) doest not exist" % (configFile))
+  def lookAround(path):
+    if path == '/':
+      echoe("Ensime configuration file (.ensime) could not be found")
       return None
+    configFile = path + '/' + '.ensime'
+    if os.path.isfile(configFile): return configFile
+    else: return lookAround(os.path.dirname(path))
 
-    return configFile
+  configFile = lookAround(os.getcwd())
+  log.debug("getEnsimeConfigFile: .ensime configuration file: %s", configFile)
+
+  return configFile
 
 def ensimeConfigToPython(filename):
   try: f = file(filename)
