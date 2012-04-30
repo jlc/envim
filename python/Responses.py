@@ -185,3 +185,23 @@ class CompletionsHandler(SwankCallHandler):
 
     OmniOutput().showCompletions()
 
+@SimpleSingleton
+class FormatSourceHandler(SwankCallHandler):
+
+  def abort(self, code, details):
+    echoe("FormatSource abort: "+codeDetailsString(code, details))
+
+  def response(self, r):
+    if not r:
+      echoe("FormatSource file error")
+      return
+
+    cmds = [
+      "call feedkeys('<cr>')",
+      # @todo: we use feedkeys() in order to avoid loosing the syntax colors, simply 'e' should be enough (cf. #9)
+      "call feedkeys(':e')"
+    ]
+    vimCommands(cmds)
+
+    echo("FormatSource done")
+

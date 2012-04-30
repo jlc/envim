@@ -16,3 +16,4 @@
 
 setlocal omnifunc=envim#Completions
 setlocal completeopt=menuone,preview
+setlocal autoread

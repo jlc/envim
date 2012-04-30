@@ -179,6 +179,10 @@ fun! envim#UsesOfSymbolAtPoint()
   py Envim().usesOfSymbolAtPoint()
 endfun
 
+fun! envim#FormatSource()
+  py Envim().formatSource()
+endfun
+
 fun! envim#logEvent(event)
   py elog().debug("envim#logEvent: %s", vim.eval("a:event"))
 endfun

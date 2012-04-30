@@ -105,6 +105,19 @@ class Envim:
       SwankRpc().usesOfSymbolAtPoint(filename, offset)(UsesOfSymbolAtPointHandler())
 
   @CatchAndLogException
+  def formatSource(self):
+    if not checkCompilerReady(): return
+
+    # @todo: ensure that file is in source-roots
+    filename = getCurrentFilename()
+    if filename == None:
+      echoe("Unknown current filename")
+    else:
+      vim.command("update")
+      SwankRpc().formatSource([filename])(FormatSourceHandler())
+      echo("Please wait while formating...")
+
+  @CatchAndLogException
   def onCursorMoved(self):
     PreviewOutput().close()
 

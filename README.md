@@ -285,6 +285,39 @@ Default shortcut:
 
     <C-x><C-o>
 
+### Source formatting
+
+Command:
+
+    :EnvimFormatSource
+
+Default shortcut:
+
+    <leader>es
+
+Configuration example (to add in .ensime file):
+
+    ;; :formatting-prefs (symbol_map)
+    ;; https://github.com/mdr/scalariform
+    :formatting-prefs (:alignParameters t
+                    :alignSingleLineCaseStatements nil
+                    :alignSingleLineCaseStatements_maxArrowIndent 20
+                    :compactControlReadability t
+                    :compactStringConcatenation t
+                    :doubleIndentClassDeclaration t
+                    :indentLocalDefs nil
+                    :indentPackageBlocks nil
+                    :indentSpaces 2
+                    :indentWithTabs nil
+                    :multilineScaladocCommentsStartOnFirstLine nil
+                    :preserveDanglingCloseParenthesis t
+                    :placeScaladocAsterisksBeneathSecondAsterisk nil
+                    :preserveSpaceBeforeArguments nil
+                    :rewriteArrowSymbols nil
+                    :spaceBeforeColon nil
+                    :spaceInsideBrackets nil
+                    :spaceInsideParentheses nil
+                    :spacesWithinPatternBinders t)
 
 ## Acknoledgements and thanks
 
@@ -296,4 +329,4 @@ Default shortcut:
 
 - Hubert Behaghel, a dear friend and strong supporter of this initiative.
 
-
+- Richard Emberson for his many contributions.

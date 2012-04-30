@@ -23,11 +23,13 @@ command! -nargs=0 EnvimTypecheckFile call envim#TypecheckFile()
 command! -nargs=0 EnvimTypecheckAll call envim#TypecheckAll()
 command! -nargs=0 EnvimSymbolAtPoint call envim#SymbolAtPoint()
 command! -nargs=0 EnvimUsesOfSymbolAtPoint call envim#UsesOfSymbolAtPoint()
+command! -nargs=0 EnvimFormatSource call envim#FormatSource()
 
 noremap <leader>ef :EnvimTypecheckFile<cr>
 noremap <leader>ea :EnvimTypecheckAll<cr>
 noremap <leader>ei :EnvimSymbolAtPoint<cr>
 noremap <leader>eo :EnvimUsesOfSymbolAtPoint<cr>
+noremap <leader>es :EnvimFormatSource<cr>
 
 augroup ENVIM
   au!
